@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% block content1 %}
+    <!-- 因为这里不是RESTFul api，因此不写成DELETE请求，而是POST请求！ -->
+    <form action="" method="POST">
+        {% csrf_token %}
+        <!-- 因为此template要应用在所有的delete操作上，如删除room，删除comment，因此这里将变量命名为obj -->
+        <p>Are you sure you want to delete '{{ obj }}'?</p>
+        <!-- template中可以获取request对象，request.META.HTTP_REFERER表示回到上一页 -->
+        <a href="{{ request.META.HTTP_REFERER }}">Go Back</a>
+        <input type="submit" value="Confirm" />
+    </form>
+{% endblock content1 %}

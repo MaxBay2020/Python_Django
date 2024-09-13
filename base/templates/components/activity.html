@@ -1,0 +1,15 @@
+<section>
+    <h3>Recent Activities:</h3>
+    {% for comment in roomComments %}
+        <article>
+            <small>
+                <a href="{% url 'userProfile' comment.user.id %}">@{{ comment.user }}</a>
+                at {{ comment.created | timesince }}:</small>
+            <p>Room topic: {{ comment.room }}</p>
+            <p>Comment: {{ comment }}</p>
+            {% if request.user == comment.user %}
+                <a href="{% url 'deleteMessage' comment.id %}">Delete</a>
+            {% endif %}
+        </article>
+    {% endfor %}
+</section>

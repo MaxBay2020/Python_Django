@@ -1,0 +1,17 @@
+<section>
+    <ul>
+        {% for room in rooms %}
+            <a href="{% url 'userProfile' room.host.id %}">@{{ room.host.username }}</a>
+            <!-- 使用django 中的url功能来link，第一个参数是urls.py文件中配置中的name中的值，第二个参数是动态参数 -->
+            <a href='{% url "room" room.id %}'><li>{{ room.id }} - {{ room.name }}</li></a>
+            <small>{{ room.topic.name }}</small>
+            <!-- 只有登录的用户并且是该room的主人才能看到edit和delete -->
+            {% if request.user.is_authenticated and request.user == room.host %}
+                <a href="{% url 'updateRoom' room.id %}">Edit</a>
+                <a href="{% url 'deleteRoom' room.id %}">Delete</a>
+            {% endif %}
+
+            <hr />
+        {% endfor %}
+    </ul>
+</section>

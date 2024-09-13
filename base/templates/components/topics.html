@@ -1,0 +1,15 @@
+<aside>
+    <h3>Browse Topics</h3>
+    <hr />
+    <ul>
+        <a href="{% url 'home' %}">
+            <li>All</li>
+        </a>
+        {% for topic in topics %}
+            <!-- 用下面的方式追加query参数 -->
+            <a href="{% url 'home' %}?searchKeyword={{topic}}">
+                <li>{{ topic.name }}</li>
+            </a>
+        {% endfor %}
+    </ul>
+</aside>

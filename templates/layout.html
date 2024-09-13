@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<!-- 使用下面的方式加载static文件 -->
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Study bud</title>
+    <!-- 因为我们已经在settings.py文件中配置了static文件的路径，因此下面的static就会去到这个路径 -->
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+</head>
+<body>
+  {% include './navbar.html'%}
+
+  {% block content1 %}
+  <!-- children component -->
+  {% endblock %}
+
+  <!-- 使用static图片 -->
+  <img src="{% static 'images/test.png' %}" alt="image">
+</body>
+</html>

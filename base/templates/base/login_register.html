@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+
+{% block content1 %}
+
+  <!-- 如果有message，则显示 -->
+  {% if messages %}
+    <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if currentPage == 'loginPage' %}
+    <!-- login用户的form -->
+    <section>
+      <form action="" method="POST">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="username" />
+        <input type="password" name="password" placeholder="password" />
+        <input type="submit" value="Login" />
+        <a href="{% url 'register' %}">Register now</a>
+      </form>
+    </section>
+  {% else %}
+    <!-- register用户的form -->
+    <section>
+      <form action="" method="POST">
+        {% csrf_token %}
+        <!-- 我们使用Django提供的register用户的form的UI -->
+        {{ registerUserForm.as_p }}
+        <input type="submit" value="Register" />
+        <a href="{% url 'login' %}">Login now</a>
+      </form>
+    </section>
+  {% endif %}
+
+
+
+
+{% endblock content1 %}
+

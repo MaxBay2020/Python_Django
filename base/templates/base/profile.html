@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+
+{% block content1 %}
+  <h1>{{ user.username }}</h1>
+
+  <!-- topics -->
+  <section>
+    {% include '../components/topics.html' %}
+  </section>
+
+  <!-- feeds -->
+  <section>
+    {% include '../components/feed.html' %}
+  </section>
+
+  <!-- Activities -->
+  <section>
+    {% include '../components/activity.html' %}
+  </section>
+
+
+{% endblock content1%}

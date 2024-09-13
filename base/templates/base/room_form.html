@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% block content1 %}
+
+<section>
+    <!-- action=''表示：form数据会提交到本url的route -->
+    <form action='' method='POST'>
+        <!-- 如果是POST请求，需要使用csrf_token -->
+        {% csrf_token %}
+        <!-- 渲染form得UI；.as_p的意思是每个form的字段都包裹一个p标签 -->
+        {{ roomForm.as_p }}
+        <input type="submit" value="Submit" />
+    </form>
+</section>
+
+
+{% endblock content1%}
+
