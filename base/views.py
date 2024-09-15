@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from .models import Room, Topic, Message
-from .forms import RoomForm
+from .forms import RoomForm, UserForm
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -324,11 +324,25 @@ def userProfile(request, userId):
     return render(request, 'base/profile.html', context)
 
 # 根据userId更新user
-def userProfileUpdate(request, userId):
-    user = User.objects.get(id = userId)
+@login_required(login_url = 'login')
+def userProfileUpdate(request):
+    currentUser = request.user
+
+    # 渲染数据到form上
+    userForm = UserForm(instance = currentUser)
+
+    # 如果访问此controller的请求是POST请求，说明用户要update信息
+    if request.method == 'POST':
+        updatedUser = UserForm(request.POST, instance = currentUser)
+
+        if updatedUser.is_valid():
+            updatedUser.save()
+            return redirect('userProfile', userId = currentUser.id)
 
     context = {
-        'user': user,
-
+        'userForm': userForm
     }
-    return render(request, 'base/profile.html', context)
+
+    return render(request, 'base/update-user.html', context)
+
+

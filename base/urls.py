@@ -29,5 +29,5 @@ urlpatterns = [
     path('profile/<str:userId>', views.userProfile, name='userProfile'),
 
     # 更新user的route
-    path('profile/update/<str:userId>', views.userProfileUpdate, name='userProfileUpdate'),
+    path('user/update', views.userProfileUpdate, name='userProfileUpdate'),
 ]
