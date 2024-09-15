@@ -1,5 +1,21 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+
+# overwrite django内置的user表
+class User(AbstractUser):
+    name = models.CharField(max_length=200, null=True)
+    email = models.EmailField(unique=True, null=False)
+    bio = models.TextField(max_length=200, null=True)
+
+    # 如果要使用ImageField，需要安装Pillow包，用来处理图片的包
+    # 命令：python -m pip install Pillow
+    # 指定默认的头像，路径起始点为static/images
+    avatar = models.ImageField(null=True, default='avatar.svg')
+
+    # 登录时的username变成了email
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
 # 创建Topic表
 # 如果不明确指定主键，会自动按顺序生成主键，如1,2,3...

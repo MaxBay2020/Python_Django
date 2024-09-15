@@ -5,7 +5,7 @@
         <div class="activities__boxHeader roomListRoom__header">
           <a href="{% url 'userProfile' comment.user.id %}" class="roomListRoom__author">
             <div class="avatar avatar--small active">
-              <img src="{% static 'images/avatar.svg' %}" />
+              <img src="{{ comment.user.avatar.url }}" />
             </div>
             <p>
               @{{ comment.user.username }}

@@ -18,6 +18,7 @@
         </div>
       </div>
       <div class="layout__body">
+        <!-- enctype="multipart/form-data"的意思是：我们的form不仅要传输text，还要传输文件过去 -->
         <form class="form" action="" method="POST" enctype="multipart/form-data">
           {% csrf_token %}
 

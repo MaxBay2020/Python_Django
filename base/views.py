@@ -1,9 +1,8 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
-from .models import Room, Topic, Message
-from .forms import RoomForm, UserForm
+from .models import Room, Topic, Message, User
+from .forms import RoomForm, UserForm, CustomUserCreationForm
 from django.db.models import Q
-from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -248,12 +247,12 @@ def loginUser(request):
 def registerUser(request):
 
     # 我们使用Django提供的register用户的form的UI
-    registerUserForm = UserCreationForm()
+    registerUserForm = CustomUserCreationForm()
 
     # 如果访问此controller的请求是POST请求
     if request.method == 'POST':
         # 准备数据
-        registerUserForm = UserCreationForm(request.POST)
+        registerUserForm = CustomUserCreationForm(request.POST)
         if registerUserForm.is_valid():
             # 如果数据通过了验证，则保存到database中
             # commit=False的意思是先不要存到database中，做一些处理之后才存到db中；
@@ -333,7 +332,8 @@ def userProfileUpdate(request):
 
     # 如果访问此controller的请求是POST请求，说明用户要update信息
     if request.method == 'POST':
-        updatedUser = UserForm(request.POST, instance = currentUser)
+        # request.FILES来处理传来的文件
+        updatedUser = UserForm(request.POST, request.FILES, instance = currentUser)
 
         if updatedUser.is_valid():
             updatedUser.save()

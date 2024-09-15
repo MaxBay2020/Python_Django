@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
+from django.conf.global_settings import AUTH_USER_MODEL
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -129,8 +131,17 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
 
+# MEDIA_ROOT用来配置用户上传的文件存在哪里，如头像等；
+# 如果时production环境，一般会存在aws的S3中；
+MEDIA_ROOT = BASE_DIR / 'static/images'
+
+# 要设置这些图片的url
+MEDIA_URL = '/images/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
+AUTH_USER_MODEL = 'base.User'
+

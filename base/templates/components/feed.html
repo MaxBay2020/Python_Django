@@ -7,7 +7,7 @@
                 <div class="roomListRoom__header">
                   <a href="{% url 'userProfile' room.host.id %}" class="roomListRoom__author">
                     <div class="avatar avatar--small active">
-                      <img src="{% static 'images/avatar.svg' %}" />
+                      <img src="{{ room.host.avatar.url }}" />
                     </div>
                     <span>@{{ room.host.username }}</span>
                   </a>
