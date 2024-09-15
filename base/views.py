@@ -95,25 +95,49 @@ def createRoom(request):
     # 使用RoomForm()方法来渲染room中的字段到UI中；
     roomForm = RoomForm()
 
+    topics = Topic.objects.all()
+
     # 如果访问此controll的请求是POST请求
     if request.method == 'POST':
-        # body的信息放在了request.POST中；
-        # 我们不需要手动给每个field进行赋值；我们使用下面的方式自动对对应的字段进行赋值；
-        # 准备room数据
-        newRoom = RoomForm(request.POST)
-        # 对每个field进行有效性验证，如在models.py中的max_length=200
-        if newRoom.is_valid():
-            # 存入数据库
-            # 在存入db之前，需要指定当前room的主人
-            currentRoom = newRoom.save(commit = False)
-            currentRoom.host = request.user
-            currentRoom.save()
-            # redirect()中的参数也是urls.py文件中的每个route中的name的值
-            # 创建完room后，跳转到home路由所对应的页面；
-            return redirect('home')
+        # 从form中获取topic的值
+        topicName = request.POST.get('topic')
+        # 下面代码的意思是：
+        # 如果Topic表中，存在topicName值，created的值就是False，topic就是该topicName；
+        # 如果Topic表中，不存在topicName的值，create的值就是True，topic就是该topicName；
+        topic, created = Topic.objects.get_or_create(name = topicName)
+
+        # 创建room对象并存入到db中
+        Room.objects.create(
+            host = request.user,
+            topic = topic,
+            name = request.POST.get('name'),
+            description = request.POST.get('description')
+        )
+        return redirect('home')
 
 
-    return render(request, 'base/room_form.html', {'roomForm': roomForm})
+
+        # # body的信息放在了request.POST中；
+        # # 我们不需要手动给每个field进行赋值；我们使用下面的方式自动对对应的字段进行赋值；
+        # # 准备room数据
+        # newRoom = RoomForm(request.POST)
+        # # 对每个field进行有效性验证，如在models.py中的max_length=200
+        # if newRoom.is_valid():
+        #     # 存入数据库
+        #     # 在存入db之前，需要指定当前room的主人
+        #     currentRoom = newRoom.save(commit = False)
+        #     currentRoom.host = request.user
+        #     currentRoom.save()
+        #     # redirect()中的参数也是urls.py文件中的每个route中的name的值
+        #     # 创建完room后，跳转到home路由所对应的页面；
+        #     return redirect('home')
+
+
+    context = {
+        'roomForm': roomForm,
+        'topics': topics
+    }
+    return render(request, 'base/room_form.html', context)
 
 # 根据roomId更新room
 @login_required(login_url='login')
@@ -123,6 +147,8 @@ def updateRoom(request, roomId):
     # 渲染旧的room数据
     roomForm = RoomForm(instance=currentRoom)
 
+    topics = Topic.objects.all()
+
     # 如果登录的user不是该room的主人
     if request.user != currentRoom.host:
         return HttpResponse('You are not allowed to update this room!')
@@ -130,15 +156,37 @@ def updateRoom(request, roomId):
     # 如果访问此controll的请求是POST请求
     # 注意！这里应该是PUT请求，但我们不是开发RESTFul api；因为是update数据；但是我们的创建和更新共享了一个UI，即room_form.html，因此这里就是POST请求；
     if request.method == 'POST':
-        # 我们不需要手动给每个field进行赋值；我们使用下面的方式自动对对应的字段进行赋值；
-        # 将旧的room数据替换成新的room数据
-        updatedRoom = RoomForm(request.POST, instance=currentRoom)
-        if updatedRoom.is_valid():
-            updatedRoom.save()
-            # 更新完room后，跳转到home路由所对应的页面；
-            return redirect('home')
 
-    return render(request, 'base/room_form.html', {'roomForm': roomForm})
+        # 从form中获取topic的值
+        topicName = request.POST.get('topic')
+        # 下面代码的意思是：
+        # 如果Topic表中，存在topicName值，created的值就是False，topic就是该topicName；
+        # 如果Topic表中，不存在topicName的值，create的值就是True，topic就是该topicName；
+        topic, created = Topic.objects.get_or_create(name=topicName)
+        currentRoom.name = request.POST.get('name')
+        # 因为用户可能添加新的topic
+        currentRoom.topic = topic
+        currentRoom.description = request.POST.get('description')
+
+        # 存入到db中
+        currentRoom.save()
+        return redirect('home')
+
+        # # 我们不需要手动给每个field进行赋值；我们使用下面的方式自动对对应的字段进行赋值；
+        # # 将旧的room数据替换成新的room数据
+        # updatedRoom = RoomForm(request.POST, instance=currentRoom)
+        # if updatedRoom.is_valid():
+        #     updatedRoom.save()
+        #     # 更新完room后，跳转到home路由所对应的页面；
+        #     return redirect('home')
+
+    context = {
+        'roomForm': roomForm,
+        'topics': topics,
+        'room': currentRoom
+    }
+
+    return render(request, 'base/room_form.html', context)
 
 # 根据roomId删除room
 @login_required(login_url='login')
@@ -263,12 +311,24 @@ def userProfile(request, userId):
     rooms = user.room_set.all()
     roomComments = user.message_set.all()
     topics = Topic.objects.all()
+    room_count = rooms.count()
 
     context = {
         'user': user,
         'rooms': rooms,
         'roomComments': roomComments,
         'topics': topics,
+        'room_count': room_count,
     }
 
+    return render(request, 'base/profile.html', context)
+
+# 根据userId更新user
+def userProfileUpdate(request, userId):
+    user = User.objects.get(id = userId)
+
+    context = {
+        'user': user,
+
+    }
     return render(request, 'base/profile.html', context)

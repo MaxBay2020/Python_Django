@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+
+{% block content1 %}
+    <h1>room {{ room.name }}</h1>
+    <p>{{ room.description }}</p>
+    <section>
+        <h5>Comments:</h5>
+        {% for comment in comments %}
+            <!-- message.created | timesince表示：将时间格式化为：xxx之前，如6个月之前 -->
+            <small>@{{ comment.user.username }} at {{ comment.created | timesince }} ago says: {{ comment }}</small>
+            <p>{{ comment.body }}</p>
+            <!-- 如果评论的用户就是登录的用户，则可以删除该评论 -->
+            {% if request.user == comment.user %}
+                <a href="{% url 'deleteMessage' comment.id %}">Delete</a>
+            {% endif %}
+        {% endfor %}
+    </section>
+
+    <!-- comment form：只有登录的用户才能评论 -->
+    {% if request.user.is_authenticated %}
+        <section>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <input type="text" name="commentBody" placeholder="Leave your message" />
+            </form>
+        </section>
+    {% endif %}
+
+    <!-- participants list -->
+    <section>
+        <h3>Participants:</h3>
+        <ul>
+            {% for user in participants %}
+                <li>@{{ user.username }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endblock %}

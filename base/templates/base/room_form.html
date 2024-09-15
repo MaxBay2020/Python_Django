@@ -1,17 +1,58 @@
 {% extends 'layout.html' %}
+
 {% block content1 %}
+  <main class="create-room layout">
+    <div class="container">
+      <div class="layout__box">
+        <div class="layout__boxHeader">
+          <div class="layout__boxTitle">
+            <a href="{% url 'home' %}">
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                <title>arrow-left</title>
+                <path
+                  d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+                </path>
+              </svg>
+            </a>
+            <h3>Create\Update Study Room</h3>
+          </div>
+        </div>
 
-<section>
-    <!-- action=''表示：form数据会提交到本url的route -->
-    <form action='' method='POST'>
-        <!-- 如果是POST请求，需要使用csrf_token -->
-        {% csrf_token %}
-        <!-- 渲染form得UI；.as_p的意思是每个form的字段都包裹一个p标签 -->
-        {{ roomForm.as_p }}
-        <input type="submit" value="Submit" />
-    </form>
-</section>
+        <div class="layout__body">
+          <form class="form" action="" method='POST'>
+            {% csrf_token %}
 
+              <div class="form__group">
+                <label for="room_name">Room Name</label>
+                {{ roomForm.name }}
+              </div>
 
-{% endblock content1%}
+              <div class="form__group">
+                <label for="room_description">Room Description</label>
+                {{ roomForm.description }}
+              </div>
 
+              <!-- 使用下面的方式来创建autocomplete：加入了搜索功能，和如果不存在则创建的功能； -->
+              <div class="form__group">
+                <label for="room_topic">Room Topic</label>
+                <input type="text" name="topic" required list="topicList" value="{{ room.topic.name }}" />
+                <!-- datalist的id值必须和input的list值一致 -->
+                <datalist id="topicList">
+                  <select id="room_topic">
+                    {% for topic in topics %}
+                      <option value="{{ topic }}">{{ topic }}</option>
+                    {% endfor %}
+                  </select>
+                </datalist>
+              </div>
+
+            <div class="form__action">
+              <a class="btn btn--dark" href="{% url 'home' %}">Cancel</a>
+              <button class="btn btn--main" type="submit">Confirm</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+{% endblock content1 %}
